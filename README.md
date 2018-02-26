@@ -1,5 +1,6 @@
 # Manspreading
 Manspreading helps you greedily occupy a peer seat in a remote geth node. 
+![seat-occupied](https://sicksack.com/bags/bag-0261.jpg)
 
 ### Introduction
 Sadly, due to the fact that many nodes on Ethereum network do not change the [default](https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options) `--maxpeers` settings, most nodes are full and won't accept new peers. 
