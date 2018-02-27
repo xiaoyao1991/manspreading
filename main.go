@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"math/big"
 	"sync"
-	"time"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/p2p"
@@ -16,10 +16,6 @@ import (
 
 const ua = "manspreading"
 const ver = "1.0.0"
-
-var emptyHash = common.Hash{}
-var realCurrentBlock = emptyHash
-var realTD = big.NewInt(0)
 
 // statusData is the network packet for the status message.
 type statusData struct {
@@ -30,13 +26,19 @@ type statusData struct {
 	GenesisBlock    common.Hash
 }
 
+// newBlockData is the network packet for the block propagation message.
+type newBlockData struct {
+	Block *types.Block
+	TD    *big.Int
+}
+
 type conn struct {
 	p  *p2p.Peer
 	rw p2p.MsgReadWriter
 }
 
 type proxy struct {
-	autopilot      uint32
+	lock           sync.RWMutex
 	upstreamNode   *discover.Node
 	upstreamConn   *conn
 	downstreamConn *conn
@@ -59,7 +61,6 @@ func main() {
 
 	node, _ := discover.ParseNode(*upstreamUrl)
 	pxy = &proxy{
-		autopilot:    1,
 		upstreamNode: node,
 	}
 
@@ -73,7 +74,7 @@ func main() {
 		StaticNodes:    []*discover.Node{node},
 		TrustedNodes:   []*discover.Node{node},
 
-		Protocols: []p2p.Protocol{manspreadingProtocol()},
+		Protocols: []p2p.Protocol{newManspreadingProtocol()},
 
 		ListenAddr: *listenAddr,
 		Logger:     log.New(),
@@ -90,15 +91,5 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	ticker := time.Tick(5 * time.Second)
-	for {
-		select {
-		case <-ticker:
-			fmt.Println("peers: ", pxy.srv.Peers())
-		default:
-		}
-	}
-
 	wg.Wait()
 }
