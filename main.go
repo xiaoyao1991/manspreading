@@ -61,10 +61,11 @@ func main() {
 	var nodekey *ecdsa.PrivateKey
 	if *privkey != "" {
 		nodekey, _ = crypto.LoadECDSA(*privkey)
-		fmt.Println("Node Key Loaded from ", *privkey)
+		fmt.Println("Node Key loaded from ", *privkey)
 	} else {
 		nodekey, _ = crypto.GenerateKey()
-		fmt.Println("Node Key Generated")
+		crypto.SaveECDSA("./nodekey", nodekey)
+		fmt.Println("Node Key generated and saved to ./nodekey")
 	}
 
 	node, _ := discover.ParseNode(*upstreamUrl)
