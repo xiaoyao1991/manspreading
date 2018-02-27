@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/ecdsa"
 	"flag"
 	"fmt"
 	"math/big"
@@ -50,14 +51,21 @@ var pxy *proxy
 
 var upstreamUrl = flag.String("upstream", "", "upstream enode url to connect to")
 var listenAddr = flag.String("listenaddr", "127.0.0.1:36666", "listening addr")
+var privkey = flag.String("nodekey", "", "nodekey file")
 
 func init() {
 	flag.Parse()
 }
 
 func main() {
-	nodekey, _ := crypto.GenerateKey()
-	fmt.Println("Node Key Generated")
+	var nodekey *ecdsa.PrivateKey
+	if *privkey != "" {
+		nodekey, _ = crypto.LoadECDSA(*privkey)
+		fmt.Println("Node Key Loaded from ", *privkey)
+	} else {
+		nodekey, _ = crypto.GenerateKey()
+		fmt.Println("Node Key Generated")
+	}
 
 	node, _ := discover.ParseNode(*upstreamUrl)
 	pxy = &proxy{
