@@ -16,6 +16,11 @@ Manspreading is a proxy server that can be run as daemon and occupies a "seat" a
 ### Usage
 1. `go build .`
 2. `./manspreading --upstream="<remote node enode url>" --listenaddr="127.0.0.1:36666"`  
-    A log line will show what's the enode url of the manspreading proxy in the format of `enode://<nodekey>@<listenaddr>`
+    A log line will show what's the enode url of the manspreading proxy in the format of `enode://<nodekey>@<listenaddr>`  
+    or if you have a nodekey file that you'd like to use:  
+    `./manspreading --upstream="<remote node enode url>" --listenaddr="127.0.0.1:36666" --nodekey="<path_to_your_nodekey>"`  
+    Upstream node will be configured as both a static node and a trusted node, therefore even if the upstream disconnect itself, manspreading will attempt to reconnect indefinitely.
 3. Start your real geth instance and add the manspreading enode url as a peer by running `admin.addPeer("<manspreading enode url>")`
 
+### TODO
+- Making manspreading a 1-to-many or even a many-to-many proxy

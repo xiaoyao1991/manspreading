@@ -60,11 +60,11 @@ func handle(p *p2p.Peer, rw p2p.MsgReadWriter) error {
 				return err
 			}
 
-			fmt.Println("ProtocolVersion", myMessage.ProtocolVersion)
-			fmt.Println("NetworkId   ", myMessage.NetworkId)
-			fmt.Println("TD          ", myMessage.TD)
-			fmt.Println("CurrentBlock", myMessage.CurrentBlock)
-			fmt.Println("GenesisBlock", myMessage.GenesisBlock)
+			fmt.Println("ProtocolVersion: ", myMessage.ProtocolVersion)
+			fmt.Println("NetworkId:       ", myMessage.NetworkId)
+			fmt.Println("TD:              ", myMessage.TD)
+			fmt.Println("CurrentBlock:    ", myMessage.CurrentBlock.Hex())
+			fmt.Println("GenesisBlock:    ", myMessage.GenesisBlock.Hex())
 
 			pxy.lock.Lock()
 			if p.ID() == pxy.upstreamNode.ID {
